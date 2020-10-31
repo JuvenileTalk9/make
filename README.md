@@ -7,7 +7,7 @@
 - gcc 4.8.5
 
 ## 目次
-1. [gcc]()
+1. [gcc](https://github.com/JuvenileTalk9/make/blob/main/01_gcc/gcc.md)
 2. [make]()
 3. [cmake]()
 
