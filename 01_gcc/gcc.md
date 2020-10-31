@@ -275,4 +275,4 @@ ldd main
 
 ```/home/gcc/sample/libadd.so```を読み込んでいることが確認できます。
 
-目次へ
+[目次へ](https://github.com/JuvenileTalk9/make)
