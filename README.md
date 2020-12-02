@@ -8,7 +8,7 @@
 
 ## 目次
 1. [gcc](https://github.com/JuvenileTalk9/make/blob/main/01_gcc/gcc.md)
-2. [make]()
+2. [make](https://github.com/JuvenileTalk9/make/blob/main/02_make/make.md)
 3. [cmake]()
 
 （作成中）
