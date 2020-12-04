@@ -22,35 +22,53 @@ Makefileは以下のような構造で記述します。
 ```c++
 // main.cpp
 #include <iostream>
+#include <string>
 
-int add(int a, int b);
+int file_check(std::string);
 
 int main(int argc, char** argv) {
-    std::cout << "3 + 8 = " << add(3, 8) << std::endl;
+    std::string file_path = "main.cpp";
+    if (file_check(file_path)) {
+        std::cout << file_path << " exists." << std::endl;
+    } else {
+        std::cout << file_path << " does not exist." << std::endl;
+    }
     return 0;
 }
+
 ```
 
 ```c++
 // calc.cpp
-int add(int a, int b) {
-    return a + b;
+#include <string>
+#include <boost/filesystem.hpp>
+
+bool file_check(std::string file_path) {
+    const boost::filesystem::path path(file_path);
+
+    boost::system::error_code error;
+    const bool result = boost::filesystem::exists(path, error);
+    
+    return result && !error;
 }
 ```
 
 このプログラムをビルドインストールするMakefileは以下のように作成します。
 
 ```Makefile
-CXX		= g++
-RM		= rm -rf
-OBJS	= main.o calc.o
-PROGRAM = hello
-DEST    = /usr/local/bin
+CXX      = g++
+RM       = rm -rf
+OBJS     = main.o file_check.o
+PROGRAM  = hello
+CXXFLAGS = -O4 -Wall -I/home/centos/boost_1_74_0/build/include
+LDFLAGS  = -L/home/centos/boost_1_74_0/build/lib
+LIBS     = -lboost_filesystem
+DEST     = /usr/local/bin
 
 all: $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CXX) $(OBJS) -o $(PROGRAM)
+	$(CXX) $(OBJS) $(LDFLAGS) $(LIBS) -o $(PROGRAM)
 
 clean:
 	$(RM) *.o $(PROGRAM)
@@ -58,6 +76,7 @@ clean:
 install: $(PROGRAM)
 	install -d $(DEST)
 	install -s $(PROGRAM) $(DEST)
+
 ```
 
 先頭に、以降で使用する変数を定義します。
@@ -66,9 +85,13 @@ install: $(PROGRAM)
 
 - ```RM```はmakeが失敗したときに不要なファイルを削除するときに削除コマンドを定義する変数です。
 
-- ```OBJS```は生成するオブジェクトファイルを記述します。省略していますが、必要なインクルードファイルやライブラリがある場合は、同様に記述します。
+- ```OBJS```は生成するオブジェクトファイルを記述します。
 
 - ```PROGRAM```は最終的に生成するプログラムファイルを記述します。
+
+- ```CXXFLAGS```はオブジェクトファイル生成時に必要なパラメータを設定します。以降の記述で```CXXFLAGS```が使われていませんが、ソースファイルのコンパイル時に自動的にこの値が設定されます。
+
+- ```LDFLAGS```と```LIBS```はリンクされるライブラリファイルのファイルパスとライブラリ名をリンク時のパラメータと同様に指定します。
 
 - ```DEST```は```make install```を実行したときのインストール先を記述します。
 
@@ -89,15 +112,15 @@ cleanもinstallも、cleanやinstallというものを作りたいわけでは�
 ```sh
 # 普通の実行方法
 $ make hello
-g++    -c -o main.o main.cpp
-g++    -c -o calc.o calc.cpp
-g++ main.o calc.o -o hello
+g++ -O4 -Wall -I/home/centos/boost_1_74_0/build/include   -c -o main.o main.cpp
+g++ -O4 -Wall -I/home/centos/boost_1_74_0/build/include   -c -o file_check.o file_check.cpp
+g++ main.o file_check.o -L/home/centos/boost_1_74_0/build/lib -lboost_filesystem -o hello
 
 # makeを省略してもOK（make allも同じ）
 $ make
-g++    -c -o main.o main.cpp
-g++    -c -o calc.o calc.cpp
-g++ main.o calc.o -o hello
+g++ -O4 -Wall -I/home/centos/boost_1_74_0/build/include   -c -o main.o main.cpp
+g++ -O4 -Wall -I/home/centos/boost_1_74_0/build/include   -c -o file_check.o file_check.cpp
+g++ main.o file_check.o -L/home/centos/boost_1_74_0/build/lib -lboost_filesystem -o hello
 
 # makeに失敗するなどで要らなくなったファイルはcleanする。
 $ make clean
