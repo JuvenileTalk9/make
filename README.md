@@ -5,7 +5,8 @@
 ## 前提
 - CentOS 7.6
 - gcc 4.8.5
-- cmake 
+- make 3.82
+- cmake 2.8.12.2
 
 ## 目次
 1. [gcc](https://github.com/JuvenileTalk9/make/blob/main/01_gcc/gcc.md)
