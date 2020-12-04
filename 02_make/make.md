@@ -4,7 +4,7 @@
 
 ソースファイルが分割される大規模プログラムを作る場合、コマンドで逐一コンパイルすることは面倒です。makeは、Makefileというファイル名のテキストファイルにビルドの手順を記述し、```make```コマンドを実行することで、自動的にコンパイルを実行することができます。
 
-## Makefileの書き方
+## Makefileの基本的な書き方
 
 Makefileは以下のような構造で記述します。
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 ```
 
 ```c++
-// calc.cpp
+// file_check.cpp
 #include <string>
 #include <boost/filesystem.hpp>
 
