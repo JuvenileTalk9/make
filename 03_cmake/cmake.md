@@ -105,3 +105,65 @@ Linking CXX executable hello
 $ ./hello
 main.cpp does not exist.
 ```
+
+## cmake 逆引きあれこれ
+
+### コメントを書きたい！
+
+コメントを書くときは```#```を使います。
+
+```cmake
+# コメント
+cmake_minimum_required(VERSION 2.8)
+project(test_cmake CXX)
+```
+
+### 変数を使いたい！
+
+CMakeLists.txtでは、変数はすべて文字列として処理されます。```1```も```hoge```も文字列です。変数を定義するときは```set```を使います。
+
+```cmake
+set(value1 1)
+```
+
+変数の中身を参照したい場合は```${}```で変数名を書き見ます。コンソールに文字列を出力したいときは```message```が使えます。CMakeLists.txtの変数名は大文字小文字を区別します。存在しない変数を使おうとすると、空文字として処理されます。
+
+```cmake
+message(value1=${value1})
+# value1=1
+message(VALUE1=${VALUE1})
+# VALUIE1=
+```
+
+変数を削除したい場合は```unset```を使います。
+
+```cmake
+unset(value1)
+message(value1=${value1})
+# value1=
+```
+
+### キャッシュ変数を使いたい！
+
+先程の変数はcmakeの実行とともに生成され、終了とともに消える変数です。しかし、ライブラリのパスなど実行のたびに変わらない値を毎回生成するのは無駄です。そこで、一度生成した変数をキャッシュファイルに保存しておき、次回起動時はキャッシュファイルから値を読み出すキャッシュ変数が利用できます。
+
+キャッシュ変数を使うときも```set```を使いますが、引数が増えています。
+
+```cmake
+message(cache_value1=${cache_value1})
+# cache_value1=
+set(cache_value1 111 CACHE STRING "cache value")
+```
+
+第1、第2引数までは同じで、変数名と値です。キャッシュ変数を使うときは第3引数に```CHACHE```を指定します。第4、第5引数はcmakeのGUIツールcmake-guiなどで使用するものなので、CUIベースで操作する場合適当でOKですが、何も指定しないとエラーになります。
+
+このcmakeを再度実行すると、2回目に```cache_value1```が設定されていることがわかります。
+
+```sh
+# 1回目
+$ cmake ..
+cache_value1=
+# 2回目
+$ cmake ..
+cache_value1=111
+```
